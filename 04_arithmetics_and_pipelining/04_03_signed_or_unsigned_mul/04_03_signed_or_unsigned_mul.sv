@@ -53,4 +53,44 @@ module signed_or_unsigned_mul
   output [2 * n - 1:0] res
 );
 
+  logic  [    n - 1:0] tmp_a, tmp_b;
+  logic  [2 * n - 1:0] tmp_res;
+  logic  [2 * n - 1:0] res_r;
+
+  assign res = res_r;
+
+  unsigned_mul unsigned_mul
+  (
+    .a   (tmp_a  ),
+    .b   (tmp_b  ),
+    .res (tmp_res)
+  );
+
+  always_comb begin
+    if (signed_mul & a[3]) begin
+      tmp_a = {n{1'b0}} - a;
+    end
+    else begin
+      tmp_a = a;
+    end
+  end
+
+  always_comb begin
+    if (signed_mul & b[3]) begin
+      tmp_b = {n{1'b0}} - b;
+    end
+    else begin
+      tmp_b = b;
+    end
+  end
+
+  always_comb begin
+    if (signed_mul & (a[3] != b[3])) begin
+      res_r = {(2 * n){1'b0}} - tmp_res;
+    end
+    else begin
+      res_r = tmp_res;
+    end
+  end
+
 endmodule
